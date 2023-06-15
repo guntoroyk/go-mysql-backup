@@ -55,8 +55,11 @@ func backupDatabaseByName(dbName string, now time.Time) error {
 	dbPort := os.Getenv("GO_MYSQL_DB_PORT")
 	dbUser := os.Getenv("GO_MYSQL_DB_USER")
 	dbPassword := os.Getenv("GO_MYSQL_DB_PASSWORD")
+	basePath := os.Getenv("GO_BASE_PATH")
 
-	backupFileName := fmt.Sprint(dbName, "-", now.Format("2006-01-02-15-04-05"), ".sql")
+	backupFileName := fmt.Sprint(basePath, "/", dbName, "-", now.Format("2006-01-02-15-04-05"), ".sql")
+
+	log.Println("backupFileName:", backupFileName)
 
 	cmd := exec.Command("mysqldump", "-h"+dbHost, "-P"+dbPort, "-u"+dbUser, "-p"+dbPassword, dbName, "--result-file="+backupFileName)
 
@@ -74,11 +77,11 @@ func backupDatabaseByName(dbName string, now time.Time) error {
 		return err
 	}
 
-	err = os.Remove(backupFileName)
-	if err != nil {
-		log.Println("Error removing backup file:", err)
-		return err
-	}
+	// err = os.Remove(backupFileName)
+	// if err != nil {
+	// 	log.Println("Error removing backup file:", err)
+	// 	return err
+	// }
 
 	return nil
 }
